@@ -1,1 +1,1 @@
-export const extensionId = 'debacohmniakednmhgobhbopmocbfkja';
+export const extensionId = 'acllgmobbhpcacfbolhjdbijabadinoo';
