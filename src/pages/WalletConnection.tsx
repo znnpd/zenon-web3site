@@ -2,7 +2,7 @@
 import React, {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import {extensionId} from '../config/extension';
+import {extensionId as extensionIdFromConfig} from '../config/extension';
 
 interface IMessageToContentScript {
     extensionId: string,
@@ -17,6 +17,10 @@ interface Props {
 
 function AccountInfo() {
 
+    let extensionId: string = extensionIdFromConfig;
+    if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_EXTENSION_ID) {
+        extensionId = process.env.REACT_APP_EXTENSION_ID;
+    }
     // Wallet connection state management
     const [walletConnection, updateWalletConnection] = React.useState({isConnected: false});
     
@@ -30,7 +34,7 @@ function AccountInfo() {
         window.addEventListener("message", (event) => {
             if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
                 console.log('FINAL RESPONSE RECEIVED: ', event.data);
-                updateWalletConnection({isConnected: event.data.data.connectionApproved});
+                updateWalletConnection({isConnected: event.data.data.siteTrusted});
             }            
         }, false);
     }, []);
@@ -43,7 +47,6 @@ function AccountInfo() {
                         updateWalletConnection({isConnected: false});
                     } else {
                         sendMessageToContentScript({extensionId: extensionId, action: 'CONNECT_WALLET', direction: 'toExtension', data: {}});
-                        updateWalletConnection({isConnected: true});
                     } 
                 }}>
                 {walletConnection.isConnected? 'Disconnect wallet' : 'Connect wallet'}
