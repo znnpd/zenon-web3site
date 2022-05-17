@@ -1,3 +1,4 @@
+/*global chrome*/
 import React, {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -24,11 +25,10 @@ function AccountInfo() {
         window.postMessage(data);
     }
 
-    // Listener to receive messages from contentScript.js which is embedded in web3sites...
+    // Listener to receive messages from backgroundScript.js
     React.useEffect(() => {
         window.addEventListener("message", (event) => {
-            if (!event.data) return;
-            if (event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
+            if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
                 console.log('FINAL RESPONSE RECEIVED: ', event.data);
                 updateWalletConnection({isConnected: event.data.data.connectionApproved});
             }            
