@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from "@mui/material/TextField";
+import {ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {extensionId as extensionIdFromConfig} from '../config/extension';
 
 interface IMessageToContentScript {
@@ -12,9 +13,15 @@ interface IMessageToContentScript {
     data: object
 }
 
+enum Currency {
+    ZNN = "ZNN", QSR = "QSR"
+}
+
 function SendTransaction() {
 
     const [toAddress, setToAddress] = React.useState<string>('mySuperAddress');
+    const [amount, setAmount] = React.useState<string>('0.00001');
+    const [currency, setCurrency] = React.useState<Currency>(Currency.ZNN);
 
     let extensionId: string = extensionIdFromConfig;
     if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_EXTENSION_ID) {
@@ -37,7 +44,7 @@ function SendTransaction() {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        sendMessageToContentScript({extensionId: extensionId, action: 'SEND_TRANSACTION', direction: 'toExtension', data: {toAddress: toAddress}});
+        sendMessageToContentScript({extensionId: extensionId, action: 'SEND_TRANSACTION', direction: 'toExtension', data: {toAddress: toAddress, amount: amount, currency: currency}});
     };
 
     return (
@@ -52,6 +59,26 @@ function SendTransaction() {
                 id="toAddress"
                 value={toAddress}
                 onChange={e => setToAddress(e.target.value)}
+            />
+            <ToggleButtonGroup
+                color="primary"
+                value={currency}
+                exclusive
+                onChange={(event, newCurrency) => setCurrency(newCurrency)}
+            >
+                {Object.keys(Currency).map(currency =>
+                    (<ToggleButton value={currency} key={currency}>{currency}</ToggleButton>)
+                )}
+            </ToggleButtonGroup>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="amount"
+                label="amount"
+                id="amount"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
             />
             <Button variant="outlined" type="submit">
                 Send Transaction
