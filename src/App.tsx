@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import WalletConnection from './pages/WalletConnection';
+import SendTransaction from './pages/SendTransaction'
 
 function App() {
     
@@ -29,8 +30,11 @@ function App() {
                     <TabPanel value="1">
                         <WalletConnection/>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
+                    <TabPanel value="2">
+                    </TabPanel>
+                    <TabPanel value="3">
+                        <SendTransaction/>
+                    </TabPanel>
                 </TabContext>
             </Grid>
             <Grid item xs={2}/>

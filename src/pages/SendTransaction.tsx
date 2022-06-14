@@ -2,6 +2,7 @@
 import React, {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import TextField from "@mui/material/TextField";
 import {extensionId as extensionIdFromConfig} from '../config/extension';
 
 interface IMessageToContentScript {
@@ -11,18 +12,14 @@ interface IMessageToContentScript {
     data: object
 }
 
-interface Props {
-    walletIsConnected: boolean,
-}
+function SendTransaction() {
 
-function WalletConnection() {
+    const [toAddress, setToAddress] = React.useState<string>('mySuperAddress');
 
     let extensionId: string = extensionIdFromConfig;
     if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_EXTENSION_ID) {
         extensionId = process.env.REACT_APP_EXTENSION_ID;
     }
-    // Wallet connection state management
-    const [walletConnection, updateWalletConnection] = React.useState({isConnected: false});
     
     // Send message to content script which has been injected by the wallet extension
     function sendMessageToContentScript(data: IMessageToContentScript) {
@@ -34,25 +31,33 @@ function WalletConnection() {
         window.addEventListener("message", (event) => {
             if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
                 console.log('FINAL RESPONSE RECEIVED: ', event.data);
-                updateWalletConnection({isConnected: event.data.data.siteTrusted});
             }            
         }, false);
     }, []);
 
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        sendMessageToContentScript({extensionId: extensionId, action: 'SEND_TRANSACTION', direction: 'toExtension', data: {toAddress: toAddress}});
+    };
+
     return (
     
-        <Box sx={{}}>
-            <Button variant="outlined" onClick={() => {
-                    if (walletConnection.isConnected) {
-                        updateWalletConnection({isConnected: false});
-                    } else {
-                        sendMessageToContentScript({extensionId: extensionId, action: 'CONNECT_WALLET', direction: 'toExtension', data: {}});
-                    } 
-                }}>
-                {walletConnection.isConnected? 'Disconnect wallet' : 'Connect wallet'}
+        <Box component="form" onSubmit={handleSubmit} sx={{}}>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="toAddress"
+                label="to address"
+                id="toAddress"
+                value={toAddress}
+                onChange={e => setToAddress(e.target.value)}
+            />
+            <Button variant="outlined" type="submit">
+                Send Transaction
             </Button>
         </Box>
     );
 }
 
-export default WalletConnection;
+export default SendTransaction;
