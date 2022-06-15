@@ -22,7 +22,8 @@ function WalletConnection() {
         extensionId = process.env.REACT_APP_EXTENSION_ID;
     }
     // Wallet connection state management
-    const [walletConnection, updateWalletConnection] = React.useState({isConnected: false});
+    const [walletConnection, updateWalletConnection] = React.useState<{isConnected: boolean}>({isConnected: false});
+    const [extensionData, updateExtensionData] = React.useState<{[key: string]: any}>({});
     
     // Send message to content script which has been injected by the wallet extension
     function sendMessageToContentScript(data: IMessageToContentScript) {
@@ -34,7 +35,8 @@ function WalletConnection() {
         window.addEventListener("message", (event) => {
             if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
                 console.log('FINAL RESPONSE RECEIVED: ', event.data);
-                updateWalletConnection({isConnected: event.data.data.siteTrusted});
+                updateWalletConnection({isConnected: event.data.data.isSiteTrusted});
+                updateExtensionData(event.data.data);
             }            
         }, false);
     }, []);
@@ -51,6 +53,12 @@ function WalletConnection() {
                 }}>
                 {walletConnection.isConnected? 'Disconnect wallet' : 'Connect wallet'}
             </Button>
+            <Box sx={{mt: 5}}>
+                {'Is wallet connected to extension: ' + walletConnection.isConnected}
+            </Box>
+            <Box sx={{mt: 5}}>
+                {walletConnection.isConnected? 'Connection data from extension: ' + JSON.stringify(extensionData) : ''}
+            </Box>
         </Box>
     );
 }

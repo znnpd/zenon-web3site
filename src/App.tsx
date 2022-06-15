@@ -31,6 +31,7 @@ function App() {
                         <WalletConnection/>
                     </TabPanel>
                     <TabPanel value="2">
+                        under construction
                     </TabPanel>
                     <TabPanel value="3">
                         <SendTransaction/>
