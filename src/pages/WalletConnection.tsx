@@ -33,7 +33,7 @@ function WalletConnection() {
     // Listener to receive messages from backgroundScript.js
     React.useEffect(() => {
         window.addEventListener("message", (event) => {
-            if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite') {
+            if (event.data && event.data.extensionId === extensionId && event.data.direction === 'toWebsite' && event.data.action === 'CONNECT_WALLET_RESPONSE') {
                 console.log('FINAL RESPONSE RECEIVED: ', event.data);
                 updateWalletConnection({isConnected: event.data.data.isSiteTrusted});
                 updateExtensionData(event.data.data);

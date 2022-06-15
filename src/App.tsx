@@ -24,17 +24,17 @@ function App() {
                 <TabContext value={tabsValue}>
                     <Tabs value={tabsValue} onChange={handleChange} centered>
                         <Tab label="Wallet Connection" value="1"/>
-                        <Tab label="Show transactions" value="2"/>
-                        <Tab label="Send transactions" value="3" />
+                        <Tab label="Send transactions" value="2" />
+                        <Tab label="Show transactions" value="3"/>
                     </Tabs>
                     <TabPanel value="1">
                         <WalletConnection/>
                     </TabPanel>
                     <TabPanel value="2">
-                        under construction
+                        <SendTransaction/>
                     </TabPanel>
                     <TabPanel value="3">
-                        <SendTransaction/>
+                        under construction
                     </TabPanel>
                 </TabContext>
             </Grid>
